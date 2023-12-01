@@ -1,9 +1,8 @@
 (ns d00
   (:require
     [clojure.string :as str]
-    [clojure.pprint :refer [pprint]]
     [clojure.test :refer :all]
-    [taoensso.encore :refer [have!]]
+    [taoensso.encore :as e]
     [util :as u :refer :all])
   (:gen-class))
 
