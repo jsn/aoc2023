@@ -8,6 +8,9 @@
 
 (set! *warn-on-reflection* true)
 
+(def ^:private IN
+  (str *ns* ".in"))
+
 (def ^:private t1
 "")
 
@@ -24,7 +27,7 @@
   (is (= (two t1) "not implemented")))
 
 (defn -main [& args]
-  (let [input (slurp (or (first args) (str *ns* ".in")))]
+  (let [input (slurp (or (first args) IN))]
     (println "1." (one input))
     (println "2." (two input))))
 
