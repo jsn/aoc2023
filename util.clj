@@ -6,6 +6,9 @@
 
 (defn string->vector [s] (read-string (str \[ s \])))
 
+(defn scan-ints [s]
+  (mapv parse-long (re-seq #"\d+" s)))
+
 (deftest everything
   (testing "string->vector"
     (is (= (string->vector "10,20,30,-1") [10 20 30 -1]))))
