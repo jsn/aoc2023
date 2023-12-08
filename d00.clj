@@ -1,9 +1,9 @@
 (ns d00
   (:require
     [clojure.string :as str]
-    [clojure.test :refer :all]
+    [clojure.test :refer [deftest testing is]]
     [taoensso.encore :as e]
-    [util :as u :refer :all])
+    [util :as u])
   (:gen-class))
 
 (set! *warn-on-reflection* true)
