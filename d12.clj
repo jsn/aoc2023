@@ -40,7 +40,8 @@
     str/split-lines
     (map #(let [[s n-s] (str/split % #"\s")]
             [(vec s) (u/string->vector n-s)]))
-    (map calc-counts) (apply +)))
+    (map calc-counts)
+    (apply +)))
 
 (deftest t-1
   (is (= (one t1) 21)))
@@ -50,12 +51,12 @@
          nh nh
          ac 0]
     (if (= i (count v))
-      (when (= ac cnt) [[] nh nd])
+      (when (= ac cnt) [nh nd])
       (case (v i)
-        \. (when (= ac cnt) [(subvec v (inc i)) nh nd])
+        \. (when (= ac cnt) [nh nd])
         \# (when-not (= ac cnt) (recur (inc i) nh (inc ac)))
         \? (if (= ac cnt) 
-             (when (pos? nd) [(subvec v (inc i)) nh (dec nd)])
+             (when (pos? nd) [nh (dec nd)])
              (when (pos? nh) (recur (inc i) (dec nh) (inc ac))))))))
 
 #_(match-cnt [\# \# \#] 3 0 0)
@@ -64,28 +65,25 @@
 #_(match-cnt [\# \# \.] 2 0 0)
 #_(match-cnt [\# \# \?] 2 0 1)
 
-(declare solve1)
-
-(defn- solve1* [v [cnt & more :as cnts] nh nd]
-  (case (get v 0)
-    nil 1
-    \# (let [[v' nh' nd'] (match-cnt v cnt nh nd)]
-         (if v'
-           (if (= 0 nh' nd')
-             1
-             (solve1 v' more nh' nd'))
-           0))
-    \. (recur (subvec v 1) cnts nh nd)
-    \?
-    (+
-     (if (pos? nh)
-       (solve1 (assoc v 0 \#) cnts (dec nh) nd)
-       0)
-     (if (pos? nd)
-       (solve1 (assoc v 0 \.) cnts nh (dec nd))
-       0))))
-
-(def ^:private solve1 (memoize solve1*))
+(def ^:private solve1
+  (memoize
+    (fn [v [cnt & more :as cnts] nh nd]
+      (case (get v 0)
+        nil 1
+        \# (if-let [[nh' nd'] (match-cnt v cnt nh nd)]
+             (if (= 0 nh' nd')
+               1
+               (solve1 (subvec v (+ cnt (- nd nd'))) more nh' nd'))
+             0)
+        \. (recur (subvec v 1) cnts nh nd)
+        \?
+        (+
+         (if (pos? nh)
+           (solve1 (assoc v 0 \#) cnts (dec nh) nd)
+           0)
+         (if (pos? nd)
+           (solve1 (assoc v 0 \.) cnts nh (dec nd))
+           0))))))
 
 (defn- calc-counts2 [[sv cnts]]
   (let [{hashes \# qs \? :or {hashes 0 qs 0}} (frequencies sv)
