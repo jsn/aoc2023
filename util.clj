@@ -65,7 +65,17 @@
     [(astar/route g2 dist h :a :e)
      (astar g2 dist h :a #{:e})])
 
-(defn- parse-grid [s]
-  (let [v (vec (str/split-lines s))]
-    {:cells v :dims [(count v) (count (first v))]}))
+(defn parse-grid
+  ([s] (parse-grid identity s))
+  ([f s]
+   (let [v (mapv f (str/split-lines s))]
+     {:cells v :dims [(count v) (count (first v))]})))
 
+(parse-grid vec
+"#.##..##.
+..#.##.#.
+##......#
+##......#
+..#.##.#.
+..##..##.
+#.#.##.#.")
