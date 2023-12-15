@@ -5,6 +5,7 @@
         org.clojure/core.logic {:mvn/version "1.0.1"}
         astar-search/astar-search {:mvn/version "0.2"}
         org.clojure/data.avl {:mvn/version "0.1.0"}
+        org.flatland/ordered {:mvn/version "1.15.11"}
         com.taoensso/encore {:mvn/version "3.74.0"}}
  :aliases
   {:neil {:project {:name jsn/aoc2023}}
