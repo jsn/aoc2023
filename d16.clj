@@ -48,14 +48,12 @@
         [p' v']))))
 
 (defn- solve [g start]
-  (print \.)
-  (flush)
   (loop [es #{}
          ls #{start}
          seen #{}]
-    (let [ls' (distinct (mapcat #(step g %) ls))
+    (let [ls' (distinct (remove seen (mapcat #(step g %) ls)))
           es' (into es (map first ls'))]
-      (if (every? seen ls')
+      (if (empty? ls')
         (count es)
         (recur es' ls' (into seen ls'))))))
 
@@ -76,7 +74,7 @@
                     
 (defn- two [s]
   (let [g (u/parse-grid vec s)]
-    (apply max (pmap #(solve g %) (starts2 g)))))
+    (apply max (map #(solve g %) (starts2 g)))))
 
 (deftest t-2
   (is (= (two t1) 51)))
@@ -84,8 +82,7 @@
 (defn -main [& args]
   (let [input (slurp (or (first args) IN))]
     (println "1." (one input))
-    (println "2." (two input))
-    (shutdown-agents)))
+    (println "2." (two input))))
 
 (comment
   (-main))
