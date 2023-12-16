@@ -1,7 +1,6 @@
 (ns d16
   (:require
     [clojure.string :as str]
-    [clojure.set :as set]
     [clojure.test :refer [deftest testing is]]
     [taoensso.encore :as e]
     [util :as u])
@@ -54,9 +53,9 @@
   (loop [es #{}
          ls #{start}
          seen #{}]
-    (let [ls' (set (mapcat #(step g %) ls))
+    (let [ls' (distinct (mapcat #(step g %) ls))
           es' (into es (map first ls'))]
-      (if (set/superset? seen ls')
+      (if (every? seen ls')
         (count es)
         (recur es' ls' (into seen ls'))))))
 
@@ -77,7 +76,7 @@
                     
 (defn- two [s]
   (let [g (u/parse-grid vec s)]
-    (apply max (doall (pmap #(solve g %) (starts2 g))))))
+    (apply max (pmap #(solve g %) (starts2 g)))))
 
 (deftest t-2
   (is (= (two t1) 51)))
