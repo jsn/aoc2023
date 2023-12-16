@@ -48,14 +48,12 @@
         [p' v']))))
 
 (defn- solve [g start]
-  (loop [es #{}
-         ls #{start}
+  (loop [ls #{start}
          seen #{}]
-    (let [ls' (distinct (remove seen (mapcat #(step g %) ls)))
-          es' (into es (map first ls'))]
+    (let [ls' (remove seen (mapcat #(step g %) ls))]
       (if (empty? ls')
-        (count es)
-        (recur es' ls' (into seen ls'))))))
+        (->> seen (map first) distinct count)
+        (recur (set ls') (into seen ls'))))))
 
 (defn one [s]
   (solve (u/parse-grid vec s) [[0 -1] [0 1]]))
