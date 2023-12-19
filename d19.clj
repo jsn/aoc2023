@@ -59,12 +59,9 @@ hdj{m>838:A,pv}
 (def ^:private OPS
   {:> > :< < := =})
 
-(defn- run-rule [rule part]
-  (let [[d k op v] rule]
-    (cond
-      (not k) d
-      ((e/have! (OPS op)) (k part) v) d
-      :else nil)))
+(defn- run-rule [[d k op v] part]
+  (when (or (not op) ((e/have! (OPS op)) (k part) v))
+    d))
 
 (defn- run-flows [flows part]
   (loop [flow :in]
@@ -88,18 +85,17 @@ hdj{m>838:A,pv}
     (case op
       :< (cond
            (< v1 v) [part]
-           (or (= v 1) (>= v0 v)) [nil part]
+           (>= v0 v) [nil part]
            :else [(assoc-in part [k 1] (dec v)) (assoc-in part [k 0] v)])
       :> (cond
            (> v0 v) [part]
-           (or (= v 4000) (<= v1 v)) [nil part]
+           (<= v1 v) [nil part]
            :else [(assoc-in part [k 0] (inc v)) (assoc-in part [k 1] v)])
       := (if-not (<= v0 v v1)
            [nil part]
-           [(into [(assoc part k [v v])]
-              (remove nil?
-                [(when (< v0 v) (assoc-in part [k 1] (dec v)))
-                 (when (< v v1) (assoc-in part [k 0] (inc v)))]))]))))
+           (cond-> [(assoc part k [v v])]
+             (< v0 v) (conj (assoc-in part [k 1] (dec v)))
+             (< v v1) (conj (assoc-in part [k 0] (inc v))))))))
 
 (defn- score [part]
   (apply *
