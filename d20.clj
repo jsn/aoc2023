@@ -106,9 +106,8 @@
 
 (defn two [s]
   (let [mods (parse s)
-        state (initial-state mods)
         [qb & more] (for [[k [ds _]] mods :when (some #(= :rx %) ds)] k)]
-    (assert (empty? more))
+    (e/have! empty? more)
     (reduce u/lcm
       (for [start (get-in mods [:broadcaster 0])]
         (period (trace1 mods start qb))))))
