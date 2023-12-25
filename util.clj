@@ -2,8 +2,7 @@
   (:require
     [clojure.test :refer :all]
     [clojure.string :as str]
-    [clojure.data.priority-map :as prio-map]
-    [astar.core :as astar]))
+    [clojure.data.priority-map :as prio-map]))
 
 (defn string->vector [s] (read-string (str \[ s \])))
 
@@ -51,6 +50,7 @@
            (astar g1 (constantly 1) (constantly 100) :a #{:g})
            [:a :c :f :g])))))
 
+#_(require '[astar.core :as astar])
 #_(let [g1 {:a [:b :c :d]
               :c [:e :f]
               :f [:g]}]

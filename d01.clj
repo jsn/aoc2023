@@ -31,7 +31,7 @@ treb7uchet")
   (re-pattern (str "(\\d|" (str/join "|" (keys DIGITS)) ")")))
 
 (def ^:private RE2-2
-  (re-pattern (str "(?:.*)" RE2)))
+  (re-pattern (str "(?:.*)" RE2-1)))
 
 (deftest t-2-re
   (let [s "aaaaninebb11bbbonexx"]
