@@ -8,7 +8,7 @@
 (defn string->vector [s] (read-string (str \[ s \])))
 
 (defn scan-ints [s]
-  (mapv parse-long (re-seq #"\d+" s)))
+  (mapv parse-long (re-seq #"-?\d+" s)))
 
 (deftest everything
   (testing "string->vector"
@@ -87,3 +87,19 @@
 (defn lcm [a b]
   (/ (* a b) (gcd a b)))
 
+(defn xgcd [a b]
+  (if (= a 0)
+    [b 0 1]
+    (let [[g x y] (xgcd (mod b a) a)]
+      [g (- y (* (quot b a) x)) x])))
+
+#_(xgcd 120 23)
+
+(defn gen-crt [[o1 p1] [o2 p2]]
+  (let [[g u1 u2] (xgcd p1 p2)]
+    (when (= (mod o1 g) (mod o2 g))
+      (let [p (lcm p1 p2)]
+        [(mod (/ (+ (* o1 u2 p2) (* o2 u1 p1)) g) p) p]))))
+
+#_(gen-crt [0 1] [3 4])
+#_(gen-crt [1 6] [3 4])
