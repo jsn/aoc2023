@@ -71,15 +71,17 @@
    (let [v (mapv f (str/split-lines s))]
      {:cells v :dims [(count v) (count (first v))]})))
 
-(parse-grid vec
+(defn cell [{:keys [cells] :as g} p]
+  (get-in cells p))
+
+#_(cell (parse-grid vec
 "#.##..##.
 ..#.##.#.
 ##......#
 ##......#
 ..#.##.#.
 ..##..##.
-#.#.##.#.")
-
+#.#.##.#.") [0 1])
 
 (defn gcd [a b]
   (if (zero? b) a (recur b (mod a b))))
@@ -103,3 +105,10 @@
 
 #_(gen-crt [0 1] [3 4])
 #_(gen-crt [1 6] [3 4])
+
+(defn flood [g p]
+  (loop [border #{p}
+         seen #{}]
+    (let [seen' (into seen border)
+          border' (->> border (mapcat g) (remove seen') set)]
+      (cond->> seen' (seq border') (recur border')))))
